@@ -1,0 +1,63 @@
+{
+  "clientName": "Thunder Client",
+  "collectionName": "ControlLabs",
+  "collectionId": "controllabs-session-2",
+  "dateExported": "2026-10-15",
+  "version": "1.1",
+  "folders": [],
+  "requests": [
+    {
+      "name": "1. Health Check",
+      "method": "GET",
+      "url": "http://localhost:3000/api/v1/health",
+      "headers": []
+    },
+    {
+      "name": "2. Crear Préstamo (POST)",
+      "method": "POST",
+      "url": "http://localhost:3000/api/v1/loans",
+      "headers": [
+        {
+          "name": "Content-Type",
+          "value": "application/json"
+        }
+      ],
+      "body": {
+        "type": "json",
+        "raw": "{\n    \"aula\": \"Sala 302 TI\",\n    \"numeroPC\": 20,\n    \"mouse\": 20,\n    \"teclados\": 20,\n    \"nombreGuardaEntrega\": \"Ana Perez\",\n    \"instructorRecibe\": \"Carlos Ruiz\"\n}"
+      }
+    },
+    {
+      "name": "3. Buscar Préstamos con Filtro (GET)",
+      "method": "GET",
+      "url": "http://localhost:3000/api/v1/loans/search?room=302&startDate=2026-10-01&endDate=2026-10-15",
+      "headers": [],
+      "params": [
+        {
+          "name": "room",
+          "value": "302"
+        },
+        {
+          "name": "startDate",
+          "value": "2026-10-01"
+        },
+        {
+          "name": "endDate",
+          "value": "2026-10-15"
+        }
+      ]
+    },
+    {
+      "name": "4. Obtener Préstamo por ID (GET)",
+      "method": "GET",
+      "url": "http://localhost:3000/api/v1/loans/801",
+      "headers": []
+    },
+    {
+      "name": "5. Aceptar Inventario (PUT)",
+      "method": "PUT",
+      "url": "http://localhost:3000/api/v1/loans/801/accept",
+      "headers": []
+    }
+  ]
+}
