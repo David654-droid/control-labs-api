@@ -1,18 +1,31 @@
 # 🏛️ ControlLabs API - SENA ADSO
 
-API REST profesional desarrollada en **Node.js** con **Express.js** y **TypeScript**, aplicando **Clean Architecture** para la gestión y préstamo de salas de cómputo del SENA.
+API REST profesional desarrollada en **Node.js** con **Express.js** y **TypeScript**, aplicando **Clean Architecture** para la gestión de usuarios, ambientes y equipos del SENA.
 
 ---
 
-## 📋 Sesión 2: Enrutamiento Avanzado, Controladores y TypeScript
+## 🛠️ Taller de Arquitectura REST en TypeScript: Operaciones PATCH
 
-En esta sesión se establecen las dos capas iniciales de la API:
-1. **Capa de Enrutamiento (`express.Router`)**:
-   - `src/app.ts`: Punto central de Express que monta el agregador de rutas en `/api/v1`.
-   - `src/routes/index.ts`: Enrutador principal que agrupa los módulos bajo `/loans`.
-   - `src/routes/loan.routes.ts`: Enrutador modular que asocia los verbos HTTP (`GET`, `POST`, `PUT`) a sus correspondientes métodos en el controlador.
-2. **Capa de Controladores (`LoanController`)**:
-   - `src/controllers/loan.controller.ts`: Actúa como intermediario. Recibe la petición HTTP, lee parámetros (`req.params`), filtros de consulta (`req.query`) o cuerpo JSON (`req.body`), y responde de forma honesta con código **`501 Not Implemented`** indicando que la operación de negocio está señalada con un `TODO` para conectarse en las siguientes sesiones.
+Este taller implementa la arquitectura modular de rutas y controladores para tres recursos fundamentales de ControlLabs:
+
+### 1. Módulo: Gestión de Usuarios (`/api/v1/users`)
+* **`GET /api/v1/users`**: Listado completo de usuarios registrados.
+* **`POST /api/v1/users`**: Registrar un nuevo perfil de usuario (`estudiante`, `docente`, `administrador`).
+* **`GET /api/v1/users/:id`**: Consultar detalles de un usuario por su identificador único.
+* **`PATCH /api/v1/users/:id`**: Actualización parcial del rol, estado de cuenta o contraseña vía **PATCH**.
+* **`DELETE /api/v1/users/:id`**: Eliminación lógica del sistema (cambio de estado a `INACTIVO`).
+
+### 2. Módulo: Gestión de Ambientes (`/api/v1/rooms`)
+* **`GET /api/v1/rooms`**: Listar todos los espacios físicos y laboratorios.
+* **`POST /api/v1/rooms`**: Crear un nuevo ambiente especificando su capacidad y ubicación.
+* **`GET /api/v1/rooms/:id`**: Consultar un ambiente específico.
+* **`PATCH /api/v1/rooms/:id`**: Actualización parcial de capacidad o estado operativo (`OPERATIVO`, `MANTENIMIENTO`) vía **PATCH**.
+
+### 3. Módulo: Gestión de Equipos (`/api/v1/equipments`)
+* **`POST /api/v1/equipments`**: Registrar un nuevo equipo vinculado a un ambiente de laboratorio.
+* **`GET /api/v1/equipments`**: Listar todos los equipos existentes o filtrar con `?room=SALA-301`.
+* **`GET /api/v1/equipments/:id`**: Consultar equipo por identificador o serial.
+* **`PATCH /api/v1/equipments/:id`**: Actualización parcial del estado técnico (`OPERATIVO`, `EN_MANTENIMIENTO`, `DE_BAJA`) o reasignación de ubicación física vía **PATCH**.
 
 ---
 
@@ -20,99 +33,46 @@ En esta sesión se establecen las dos capas iniciales de la API:
 
 ```
 Actv 1/
-├── .env                              # Variables de entorno locales
-├── .env.example                      # Plantilla pública de variables de entorno
-├── .gitignore                        # Exclusión de node_modules/, dist/ y .env
-├── package.json                      # Dependencias y scripts (tsx, tsc)
-├── tsconfig.json                     # Configuración del compilador TypeScript
 ├── server.ts                         # Punto de entrada HTTP y arranque del servidor
+├── tsconfig.json                     # Configuración de compilación ES2022 / CommonJS
+├── thunder-collection_ControlLabs.json # Peticiones listas para Thunder Client (PATCH, GET, POST)
 ├── tests/
-│   └── loan.routes.test.ts           # Suite de pruebas automatizadas con tsx
+│   ├── taller.patch.test.ts          # Pruebas automatizadas de los 3 módulos (11 tests)
+│   └── loan.routes.test.ts           # Pruebas de rutas de préstamos (5 tests)
 └── src/
-    ├── app.ts                        # Configuración de Express, middlewares y /api/v1
+    ├── app.ts                        # Configuración de Express y montaje /api/v1
+    ├── config/
+    │   ├── env.config.ts             # Variables de entorno
+    │   └── dataStore.ts              # Almacén de usuarios, ambientes y equipos
     ├── controllers/
-    │   └── loan.controller.ts        # Métodos controladores (501 Not Implemented)
+    │   ├── user.controller.ts        # Controlador Usuarios (CRUD + PATCH + Baja Lógica)
+    │   ├── room.controller.ts        # Controlador Ambientes (CRUD + PATCH)
+    │   ├── equipment.controller.ts   # Controlador Equipos (CRUD + PATCH)
+    │   ├── loan.controller.ts        # Controlador Préstamos
+    │   ├── auth.controller.ts        # Controlador Autenticación
+    │   └── dashboard.controller.ts   # Controlador Métricas
+    ├── models/
+    │   ├── User.ts                   # Modelo Usuario con perfiles
+    │   ├── Room.ts                   # Modelo Ambiente / Laboratorio
+    │   ├── Equipment.ts              # Modelo Equipo y Estado Técnico
+    │   └── Loan.ts                   # Modelo Préstamo Físico SENA
     └── routes/
-        ├── index.ts                  # Agregador de rutas modular
-        └── loan.routes.ts            # Definición de endpoints de préstamos
+        ├── index.ts                  # Agregador central de rutas
+        ├── user.routes.ts            # Rutas de Usuarios
+        ├── room.routes.ts            # Rutas de Ambientes
+        ├── equipment.routes.ts       # Rutas de Equipos
+        ├── loan.routes.ts            # Rutas de Préstamos
+        ├── auth.routes.ts            # Rutas de Autenticación
+        └── dashboard.routes.ts       # Rutas de Dashboard
 ```
 
 ---
 
-## 🚀 Instalación y Puesta en Marcha
+## ⚡ Comandos para Ejecución y Pruebas
 
-### 1. Instalación de Dependencias
-```bash
-npm install
+```powershell
+npm run dev           # Servidor en vivo con tsx watch (http://localhost:3000)
+npm run build         # Compilación TypeScript limpia hacia dist/
+npm test              # Ejecución de los 16 tests automatizados
+npm run test:taller   # Ejecución exclusiva de los 11 tests del taller PATCH
 ```
-
-### 2. Variables de Entorno (`.env`)
-```env
-PORT=3000
-NODE_ENV=development
-```
-
-### 3. Scripts Disponibles
-
-- **Modo Desarrollo (Recarga en caliente con tsx watch):**
-  ```bash
-  npm run dev
-  ```
-
-- **Compilar a JavaScript (Genera carpeta dist/):**
-  ```bash
-  npm run build
-  ```
-
-- **Modo Producción (Ejecuta dist compilado):**
-  ```bash
-  npm start
-  ```
-
-- **Ejecutar Suite de Pruebas Automatizadas:**
-  ```bash
-  npm test
-  ```
-
----
-
-## 📡 Endpoints Implementados (Sesión 2)
-
-| Método | Endpoint | Parámetros / Body | Respuesta Temporal |
-| :--- | :--- | :--- | :--- |
-| **GET** | `/api/v1/health` | Ninguno | `200 OK` (Health Check) |
-| **POST** | `/api/v1/loans` | `req.body` (Datos de préstamo) | `501 Not Implemented` |
-| **GET** | `/api/v1/loans/search` | `req.query` (`room`, `startDate`, `endDate`) | `501 Not Implemented` |
-| **GET** | `/api/v1/loans/:id` | `req.params.id` | `501 Not Implemented` |
-| **PUT** | `/api/v1/loans/:id/accept` | `req.params.id` | `501 Not Implemented` |
-
----
-
-## 🧪 Pruebas con Thunder Client / Postman
-
-1. **POST** `http://localhost:3000/api/v1/loans`
-   - **Headers**: `Content-Type: application/json`
-   - **Body**:
-     ```json
-     {
-       "aula": "Sala 302 TI",
-       "numeroPC": 20,
-       "mouse": 20,
-       "teclados": 20,
-       "nombreGuardaEntrega": "Ana Perez",
-       "instructorRecibe": "Carlos Ruiz"
-     }
-     ```
-   - **Status esperado**: `501 Not Implemented`
-
-2. **GET** `http://localhost:3000/api/v1/loans/search?room=302&startDate=2026-10-01&endDate=2026-10-15`
-   - **Status esperado**: `501 Not Implemented`
-
-3. **GET** `http://localhost:3000/api/v1/loans/801`
-   - **Status esperado**: `501 Not Implemented`
-
-4. **PUT** `http://localhost:3000/api/v1/loans/801/accept`
-   - **Status esperado**: `501 Not Implemented`
-
-5. **GET** `http://localhost:3000/api/v1/health`
-   - **Status esperado**: `200 OK`

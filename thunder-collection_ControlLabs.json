@@ -1,63 +1,123 @@
 {
   "clientName": "Thunder Client",
-  "collectionName": "ControlLabs",
-  "collectionId": "controllabs-session-2",
+  "collectionName": "ControlLabs - Taller REST PATCH",
+  "collectionId": "controllabs-taller-patch",
   "dateExported": "2026-10-15",
   "version": "1.1",
-  "folders": [],
-  "requests": [
+  "folders": [
     {
-      "name": "1. Health Check",
-      "method": "GET",
-      "url": "http://localhost:3000/api/v1/health",
-      "headers": []
+      "id": "fld_users",
+      "name": "1. Modulo Usuarios"
     },
     {
-      "name": "2. Crear Préstamo (POST)",
+      "id": "fld_rooms",
+      "name": "2. Modulo Ambientes"
+    },
+    {
+      "id": "fld_equipments",
+      "name": "3. Modulo Equipos"
+    },
+    {
+      "id": "fld_loans",
+      "name": "4. Modulo Prestamos (Sesion 2)"
+    }
+  ],
+  "requests": [
+    {
+      "name": "1.1 Listar Usuarios (GET)",
+      "method": "GET",
+      "url": "http://localhost:3000/api/v1/users",
+      "containerId": "fld_users"
+    },
+    {
+      "name": "1.2 Registrar Usuario (POST)",
       "method": "POST",
-      "url": "http://localhost:3000/api/v1/loans",
-      "headers": [
-        {
-          "name": "Content-Type",
-          "value": "application/json"
-        }
-      ],
+      "url": "http://localhost:3000/api/v1/users",
+      "containerId": "fld_users",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
       "body": {
         "type": "json",
-        "raw": "{\n    \"aula\": \"Sala 302 TI\",\n    \"numeroPC\": 20,\n    \"mouse\": 20,\n    \"teclados\": 20,\n    \"nombreGuardaEntrega\": \"Ana Perez\",\n    \"instructorRecibe\": \"Carlos Ruiz\"\n}"
+        "raw": "{\n  \"name\": \"Carlos Aprendiz\",\n  \"email\": \"carlos.adso@misena.edu.co\",\n  \"role\": \"estudiante\",\n  \"phone\": \"3001234567\"\n}"
       }
     },
     {
-      "name": "3. Buscar Préstamos con Filtro (GET)",
+      "name": "1.3 Consultar Usuario por ID (GET)",
       "method": "GET",
-      "url": "http://localhost:3000/api/v1/loans/search?room=302&startDate=2026-10-01&endDate=2026-10-15",
-      "headers": [],
-      "params": [
-        {
-          "name": "room",
-          "value": "302"
-        },
-        {
-          "name": "startDate",
-          "value": "2026-10-01"
-        },
-        {
-          "name": "endDate",
-          "value": "2026-10-15"
-        }
-      ]
+      "url": "http://localhost:3000/api/v1/users/usr-docente-1",
+      "containerId": "fld_users"
     },
     {
-      "name": "4. Obtener Préstamo por ID (GET)",
-      "method": "GET",
-      "url": "http://localhost:3000/api/v1/loans/801",
-      "headers": []
+      "name": "1.4 Actualizacion Parcial Usuario (PATCH)",
+      "method": "PATCH",
+      "url": "http://localhost:3000/api/v1/users/usr-estudiante-1",
+      "containerId": "fld_users",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"role\": \"docente\",\n  \"status\": \"ACTIVO\",\n  \"password\": \"NuevaClave2026\"\n}"
+      }
     },
     {
-      "name": "5. Aceptar Inventario (PUT)",
-      "method": "PUT",
-      "url": "http://localhost:3000/api/v1/loans/801/accept",
-      "headers": []
+      "name": "1.5 Eliminacion Logica Usuario (DELETE)",
+      "method": "DELETE",
+      "url": "http://localhost:3000/api/v1/users/usr-estudiante-1",
+      "containerId": "fld_users"
+    },
+    {
+      "name": "2.1 Listar Ambientes y Laboratorios (GET)",
+      "method": "GET",
+      "url": "http://localhost:3000/api/v1/rooms",
+      "containerId": "fld_rooms"
+    },
+    {
+      "name": "2.2 Crear Nuevo Ambiente (POST)",
+      "method": "POST",
+      "url": "http://localhost:3000/api/v1/rooms",
+      "containerId": "fld_rooms",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"name\": \"Laboratorio de Cloud Computing\",\n  \"capacity\": 30,\n  \"location\": \"Bloque D - Piso 2\"\n}"
+      }
+    },
+    {
+      "name": "2.3 Actualizacion Parcial Ambiente (PATCH)",
+      "method": "PATCH",
+      "url": "http://localhost:3000/api/v1/rooms/SALA-301",
+      "containerId": "fld_rooms",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"capacity\": 38,\n  \"status\": \"MANTENIMIENTO\"\n}"
+      }
+    },
+    {
+      "name": "3.1 Registrar Equipo Vinculado (POST)",
+      "method": "POST",
+      "url": "http://localhost:3000/api/v1/equipments",
+      "containerId": "fld_equipments",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"serial\": \"SN-DELL-55201\",\n  \"brand\": \"Dell\",\n  \"model\": \"OptiPlex 7090\",\n  \"roomId\": \"SALA-301\",\n  \"type\": \"PC\",\n  \"location\": \"Mesa 3\"\n}"
+      }
+    },
+    {
+      "name": "3.2 Listar y Filtrar Equipos por Ambiente (GET)",
+      "method": "GET",
+      "url": "http://localhost:3000/api/v1/equipments?room=301",
+      "containerId": "fld_equipments"
+    },
+    {
+      "name": "3.3 Actualizacion Parcial Estado Tecnico Equipo (PATCH)",
+      "method": "PATCH",
+      "url": "http://localhost:3000/api/v1/equipments/EQ-PC-001",
+      "containerId": "fld_equipments",
+      "headers": [{ "name": "Content-Type", "value": "application/json" }],
+      "body": {
+        "type": "json",
+        "raw": "{\n  \"technicalStatus\": \"EN_MANTENIMIENTO\",\n  \"location\": \"Laboratorio de Soporte TI\"\n}"
+      }
     }
   ]
 }
